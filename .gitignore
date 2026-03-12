@@ -1,0 +1,10 @@
+*
+!*/
+!.gitignore
+!*.h
+!*.cpp
+!*.qml
+!devLog/*.md
+!devLog/**/*.md
+devLog/Template/
+devLog/TIL/
