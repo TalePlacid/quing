@@ -1,4 +1,4 @@
-#ifndef DATETIME_H //guard
+#ifndef DATETIME_H 
 #define DATETIME_H
 #include <ctime>
 #include <string>
