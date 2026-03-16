@@ -41,39 +41,29 @@ Task& Task::operator=(const Task& source){
     return *this;
 }
 
-Task& Task::ModifyContents(string title, string detail){
+void Task::ModifyContents(string title, string detail){
     this->title = title;
     this->detail = detail;
-
-    return *this;
 }
 
-Task& Task::ScheduleFor(DateTime dueDate){
+void Task::ScheduleFor(DateTime dueDate){
     this->dueDate = dueDate;
-
-    return *this;
 }
 
 void Task::ClearDueDate(){
     this->dueDate = DateTime();
 }
 
-Category Task::ChangeCategory(Category category){
+void Task::ChangeCategory(Category category){
     this->category = category;
-
-    return this->category;
 }
 
-Task& Task::RecordCompletionAt(DateTime completedAt){
+void Task::RecordCompletionAt(DateTime completedAt){
     this->completedAt = completedAt;
-
-    return *this;
 }
 
-bool Task::MarkUrgent(bool isUrgent){
+void Task::MarkUrgent(bool isUrgent){
     this->isUrgent = isUrgent;
-
-    return this->isUrgent;
 }
 
 Task* Task::Clone() const{

@@ -24,12 +24,12 @@ public:
     Task(const Task& source);
     Task& operator=(const Task& source);
 
-    Task& ModifyContents(string title, string detail);
-    Task& ScheduleFor(DateTime dueDate);
+    void ModifyContents(string title, string detail);
+    void ScheduleFor(DateTime dueDate);
     void ClearDueDate();
-    Category ChangeCategory(Category category);
-    Task& RecordCompletionAt(DateTime completedAt);
-    bool MarkUrgent(bool isUrgent);
+    void ChangeCategory(Category category);
+    void RecordCompletionAt(DateTime completedAt);
+    void MarkUrgent(bool isUrgent);
 
     Task* Clone() const;
 
