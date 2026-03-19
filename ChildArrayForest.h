@@ -10,6 +10,15 @@ typedef int64_t Int;
 template <typename T>
 class ChildArrayForest{
 public:
+    struct OrderEntry{
+        T element;
+        Int level;
+
+        bool operator==(const OrderEntry& source) const{
+            return (this->element == source.element) && (this->level == source.level);
+        }
+    };
+
     class Node{
         friend class ChildArrayForest<T>;
     public:
@@ -17,8 +26,8 @@ public:
         Node(T element);
         Node(Node* parent, T element);
         ~Node();
-        Node(const Node& source);
-        Node& operator=(const Node& source);
+
+        void MoveNode(Node* node, Int index);
     private:
         Node* parent;
         vector<Node*> childs;
@@ -37,12 +46,23 @@ public:
     Node* Update(Node* node, T object);
     template <typename Key>
     Node* Search(Key key, bool (*match)(const T& object, Key key));
+    void MoveNode(Node* node, Int index);
+    void MoveAsChild(Node* node, Node* parent, Int index);
+    template <typename Processor>
+    void ForEachPostOrder(Processor process);
 
+    vector<OrderEntry> GetPreOrderEntries(Node* node);
+    vector<OrderEntry> GetPostOrderEntries(Node* node);
     Int GetLength() const;
 private:
     Node* CloneSubTree(const Node* source, Node* parent);
     template <typename Key>
     Node* SearchSubTree(Node* node, const Key& key, bool (*match)(const T& object, Key key));
+    template <typename Processor>
+    void ForEachPostOrderSubTree(Node* node, Processor process);
+
+    void GetPreOrderEntriesSubTree(Node* node, Int level, vector<OrderEntry>& entries);
+    void GetPostOrderEntriesSubTree(Node* node, Int level, vector<OrderEntry>& entries);
 private:
     vector<Node*> roots;
     Int length;
@@ -79,6 +99,35 @@ ChildArrayForest<T>::Node::~Node(){
             delete this->childs[i];
             i++;
         }
+    }
+}
+
+template <typename T>
+void ChildArrayForest<T>::Node::MoveNode(Node* node, Int index){
+    Int nodeIndex = 0;
+    while (this->childs[nodeIndex] != node)
+    {
+        nodeIndex++;
+    }
+
+    Node* movedNode = this->childs[nodeIndex];
+    if (nodeIndex < index)
+    {
+        while (nodeIndex < index - 1)
+        {
+            this->childs[nodeIndex] = this->childs[nodeIndex + 1];
+            nodeIndex++;
+        }
+        this->childs[index - 1] = movedNode;
+    }
+    else if (nodeIndex > index)
+    {
+        while (nodeIndex > index)
+        {
+            this->childs[nodeIndex] = this->childs[nodeIndex - 1];
+            nodeIndex--;
+        }
+        this->childs[index] = movedNode;
     }
 }
 
@@ -198,6 +247,83 @@ typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Update(Node* node, T ob
 }
 
 template <typename T>
+void ChildArrayForest<T>::MoveNode(Node* node, Int index){
+    if (node->parent == 0)
+    {
+        Int nodeIndex = 0;
+        while (this->roots[nodeIndex] != node)
+        {
+            nodeIndex++;
+        }
+
+        Node* movedNode = this->roots[nodeIndex];
+        if (nodeIndex < index)
+        {
+            while (nodeIndex < index - 1)
+            {
+                this->roots[nodeIndex] = this->roots[nodeIndex + 1];
+                nodeIndex++;
+            }
+            this->roots[index - 1] = movedNode;
+        }
+        else if (nodeIndex > index)
+        {
+            while (nodeIndex > index)
+            {
+                this->roots[nodeIndex] = this->roots[nodeIndex - 1];
+                nodeIndex--;
+            }
+            this->roots[index] = movedNode;
+        }
+    }
+    else
+    {
+        node->parent->MoveNode(node, index);
+    }
+}
+
+template <typename T>
+void ChildArrayForest<T>::MoveAsChild(Node* node, Node* parent, Int index){
+    // 1. 노드의 부모와의 관계를 정리한다.
+    Int nodeIndex;
+    if (node->parent == 0) //루트이면,
+    {
+        nodeIndex = 0;
+        while (this->roots[nodeIndex] != node)
+        {
+            nodeIndex++;
+        }
+        this->roots.erase(this->roots.begin() + nodeIndex);
+        this->length--;
+    }
+    else //루트가 아니면,
+    {
+        Node* nodeParent = node->parent;
+
+        nodeIndex = 0;
+        while (nodeParent->childs[nodeIndex] != node)
+        {
+            nodeIndex++;
+        }
+        nodeParent->childs.erase(nodeParent->childs.begin() + nodeIndex);
+        nodeParent->length--;
+    }
+
+    // 2. 새 부모의 지정 위치에 삽입한다.
+    node->parent = parent;
+    if (parent == 0)
+    {
+        this->roots.insert(this->roots.begin() + index, node);
+        this->length++;
+    }
+    else
+    {
+        parent->childs.insert(parent->childs.begin() + index, node);
+        parent->length++;
+    }
+}
+
+template <typename T>
 template <typename Key>
 typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Search(
     Key key,
@@ -218,6 +344,57 @@ typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Search(
     }
 
     return result;
+}
+
+template <typename T>
+template <typename Processor>
+void ChildArrayForest<T>::ForEachPostOrder(Processor process){
+    Int i = 0;
+    while (i < this->length)
+    {
+        this->ForEachPostOrderSubTree(this->roots[i], process);
+        i++;
+    }
+}
+
+template <typename T>
+vector<typename ChildArrayForest<T>::OrderEntry> ChildArrayForest<T>::GetPreOrderEntries(Node* node){
+    vector<OrderEntry> entries;
+    if (node == 0)
+    {
+        Int i = 0;
+        while (i < this->length)
+        {
+            this->GetPreOrderEntriesSubTree(this->roots[i], 0, entries);
+            i++;
+        }
+    }
+    else
+    {
+        this->GetPreOrderEntriesSubTree(node, 0, entries);
+    }
+
+    return entries;
+}
+
+template <typename T>
+vector<typename ChildArrayForest<T>::OrderEntry> ChildArrayForest<T>::GetPostOrderEntries(Node* node){
+    vector<OrderEntry> entries;
+    if (node == 0)
+    {
+        Int i = 0;
+        while (i < this->length)
+        {
+            this->GetPostOrderEntriesSubTree(this->roots[i], 0, entries);
+            i++;
+        }
+    }
+    else
+    {
+        this->GetPostOrderEntriesSubTree(node, 0, entries);
+    }
+
+    return entries;
 }
 
 template <typename T>
@@ -274,6 +451,52 @@ typename ChildArrayForest<T>::Node* ChildArrayForest<T>::SearchSubTree(
     }
 
     return result;
+}
+
+template <typename T>
+template <typename Processor>
+void ChildArrayForest<T>::ForEachPostOrderSubTree(Node* node, Processor process){
+    Int i = 0;
+
+    // 1. 하위 노드를 먼저 순회한다.
+    while (i < node->length)
+    {
+        this->ForEachPostOrderSubTree(node->childs[i], process);
+        i++;
+    }
+
+    // 2. 현재 노드의 element에 작업을 적용한다.
+    process(node->element);
+}
+
+template <typename T>
+void ChildArrayForest<T>::GetPreOrderEntriesSubTree(Node* node, Int level, vector<OrderEntry>& entries){
+    OrderEntry entry;
+    entry.element = node->element;
+    entry.level = level;
+    entries.push_back(entry);
+
+    Int i = 0;
+    while (i < node->length)
+    {
+        this->GetPreOrderEntriesSubTree(node->childs[i], level + 1, entries);
+        i++;
+    }
+}
+
+template <typename T>
+void ChildArrayForest<T>::GetPostOrderEntriesSubTree(Node* node, Int level, vector<OrderEntry>& entries){
+    Int i = 0;
+    while (i < node->length)
+    {
+        this->GetPostOrderEntriesSubTree(node->childs[i], level + 1, entries);
+        i++;
+    }
+
+    OrderEntry entry;
+    entry.element = node->element;
+    entry.level = level;
+    entries.push_back(entry);
 }
 
 #endif // CHILDARRAYFOREST_H
