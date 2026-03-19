@@ -6,6 +6,7 @@
 !*.qml
 !devLog/*.md
 !devLog/**/*.md
+!devLog/img/**
 devLog/Template/
 devLog/TIL/
 build/
