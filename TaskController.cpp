@@ -137,6 +137,25 @@ Task& TaskController::MoveAsChild(const Task& parent, Int index, const Task& tas
     return movedTask;
 }
 
+Task* TaskController::GetParentTask(const Task& task, Int level){
+    Task* parentTask = 0;
+    ChildArrayForest<Task>::Node* node = this->tasks.Search(task, this->MatchTask);
+
+    Int i = 0;
+    while (i < level && node != 0)
+    {
+        node = node->GetParent();
+        i++;
+    }
+
+    if (node != 0)
+    {
+        parentTask = &node->GetElement();
+    }
+
+    return parentTask;
+}
+
 vector<ChildArrayForest<Task>::OrderEntry> TaskController::GetPreOrderEntries(){
     return this->tasks.GetPreOrderEntries(0);
 }

@@ -29,6 +29,9 @@ public:
 
         void MoveNode(Node* node, Int index);
 
+        Node* GetParent();
+        Int GetLength() const;
+        Node* GetAt(Int index);
         T& GetElement();
         const T& GetElement() const;
     private:
@@ -57,7 +60,6 @@ public:
 
     vector<OrderEntry> GetPreOrderEntries(Node* node);
     vector<OrderEntry> GetPostOrderEntries(Node* node);
-    Int GetChildLength(Node* node) const;
     Int GetLength() const;
 private:
     Node* CloneSubTree(const Node* source, Node* parent);
@@ -134,6 +136,21 @@ void ChildArrayForest<T>::Node::MoveNode(Node* node, Int index){
         }
         this->childs[index] = movedNode;
     }
+}
+
+template <typename T>
+typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Node::GetParent(){
+    return this->parent;
+}
+
+template <typename T>
+Int ChildArrayForest<T>::Node::GetLength() const{
+    return this->length;
+}
+
+template <typename T>
+typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Node::GetAt(Int index){
+    return this->childs[index];
 }
 
 template <typename T>
@@ -435,17 +452,6 @@ vector<typename ChildArrayForest<T>::OrderEntry> ChildArrayForest<T>::GetPostOrd
     }
 
     return entries;
-}
-
-template <typename T>
-Int ChildArrayForest<T>::GetChildLength(Node* node) const{
-    Int childLength = this->length;
-    if (node != 0)
-    {
-        childLength = node->length;
-    }
-
-    return childLength;
 }
 
 template <typename T>

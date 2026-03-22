@@ -31,6 +31,8 @@ public:
     Task& Move(const Task& task, Int index);
     Task& MoveAsChild(const Task& parent, const Task& task);
     Task& MoveAsChild(const Task& parent, Int index, const Task& task);
+
+    Task* GetParentTask(const Task& task, Int level = 1);
     vector<ChildArrayForest<Task>::OrderEntry> GetPreOrderEntries();
     vector<ChildArrayForest<Task>::OrderEntry> GetPreOrderEntries(const Task& task);
     vector<ChildArrayForest<Task>::OrderEntry> GetPostOrderEntries();
