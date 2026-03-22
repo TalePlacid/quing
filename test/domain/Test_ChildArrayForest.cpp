@@ -124,7 +124,7 @@ void Test_ChildArrayForest::Execute(){
                            Local8BitStringConverter::Convert("500 수정 테스트 실패"));
 
     // 7. 순회 연산한다.
-    childArrayForest.ForEachPostOrder(this->AddOne);
+    childArrayForest.ForEachPostOrder(0, this->AddOne);
     AssertReporter::Assert(childArrayForest.GetPreOrderEntries(node15) == vector<ChildArrayForest<Int>::OrderEntry>({{501, 0}, {6, 1}, {311, 2}, {3121, 3}, {3101, 3}})
                    && childArrayForest.GetPreOrderEntries(node20) == vector<ChildArrayForest<Int>::OrderEntry>({{21, 0}})
                    && childArrayForest.GetPreOrderEntries(node30) == vector<ChildArrayForest<Int>::OrderEntry>({{31, 0}, {301, 1}}),
@@ -143,7 +143,7 @@ void Test_ChildArrayForest::Execute(){
                            Local8BitStringConverter::Convert("치환연산 테스트 실패"));
 }
 
-bool Test_ChildArrayForest::MatchInt(const Int& object, Int key){
+bool Test_ChildArrayForest::MatchInt(const Int& object, const Int& key){
     return object == key;
 }
 

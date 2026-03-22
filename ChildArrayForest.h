@@ -23,11 +23,14 @@ public:
         friend class ChildArrayForest<T>;
     public:
         Node();
-        Node(T element);
-        Node(Node* parent, T element);
+        Node(const T& element);
+        Node(Node* parent, const T& element);
         ~Node();
 
         void MoveNode(Node* node, Int index);
+
+        T& GetElement();
+        const T& GetElement() const;
     private:
         Node* parent;
         vector<Node*> childs;
@@ -40,24 +43,26 @@ public:
     ChildArrayForest(const ChildArrayForest& source);
     ChildArrayForest& operator=(const ChildArrayForest& source);
 
-    Node* Insert(T object);
-    Node* Insert(Node* parent, T object);
+    Node* Insert(const T& object);
+    Node* Insert(Node* parent, const T& object);
     void Delete(Node* node);
-    Node* Update(Node* node, T object);
+    Node* Update(Node* node, const T& object);
     template <typename Key>
-    Node* Search(Key key, bool (*match)(const T& object, Key key));
+    Node* Search(const Key& key, bool (*match)(const T& object, const Key& key));
     void MoveNode(Node* node, Int index);
+    void MoveAsChild(Node* node, Node* parent);
     void MoveAsChild(Node* node, Node* parent, Int index);
     template <typename Processor>
-    void ForEachPostOrder(Processor process);
+    void ForEachPostOrder(Node* node, Processor process);
 
     vector<OrderEntry> GetPreOrderEntries(Node* node);
     vector<OrderEntry> GetPostOrderEntries(Node* node);
+    Int GetChildLength(Node* node) const;
     Int GetLength() const;
 private:
     Node* CloneSubTree(const Node* source, Node* parent);
     template <typename Key>
-    Node* SearchSubTree(Node* node, const Key& key, bool (*match)(const T& object, Key key));
+    Node* SearchSubTree(Node* node, const Key& key, bool (*match)(const T& object, const Key& key));
     template <typename Processor>
     void ForEachPostOrderSubTree(Node* node, Processor process);
 
@@ -76,7 +81,7 @@ ChildArrayForest<T>::Node::Node()
 }
 
 template <typename T>
-ChildArrayForest<T>::Node::Node(T element)
+ChildArrayForest<T>::Node::Node(const T& element)
     :childs(0) {
     this->parent = 0;
     this->length = 0;
@@ -84,7 +89,7 @@ ChildArrayForest<T>::Node::Node(T element)
 }
 
 template <typename T>
-ChildArrayForest<T>::Node::Node(Node* parent, T element)
+ChildArrayForest<T>::Node::Node(Node* parent, const T& element)
     :childs(0) {
     this->parent = parent;
     this->length = 0;
@@ -129,6 +134,16 @@ void ChildArrayForest<T>::Node::MoveNode(Node* node, Int index){
         }
         this->childs[index] = movedNode;
     }
+}
+
+template <typename T>
+T& ChildArrayForest<T>::Node::GetElement(){
+    return this->element;
+}
+
+template <typename T>
+const T& ChildArrayForest<T>::Node::GetElement() const{
+    return this->element;
 }
 
 template <typename T>
@@ -183,7 +198,7 @@ ChildArrayForest<T>& ChildArrayForest<T>::operator=(const ChildArrayForest& sour
 }
 
 template <typename T>
-typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Insert(T object){
+typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Insert(const T& object){
     Node* node = new Node(object);
     this->roots.push_back(node);
     this->length++;
@@ -192,7 +207,7 @@ typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Insert(T object){
 }
 
 template <typename T>
-typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Insert(Node* parent, T object){
+typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Insert(Node* parent, const T& object){
     Node* node = new Node(parent, object);
     parent->childs.push_back(node);
     parent->length++;
@@ -240,7 +255,7 @@ void ChildArrayForest<T>::Delete(Node* node){
 }
 
 template <typename T>
-typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Update(Node* node, T object){
+typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Update(Node* node, const T& object){
     node->element = object;
 
     return node;
@@ -280,6 +295,24 @@ void ChildArrayForest<T>::MoveNode(Node* node, Int index){
     {
         node->parent->MoveNode(node, index);
     }
+}
+
+template <typename T>
+void ChildArrayForest<T>::MoveAsChild(Node* node, Node* parent){
+    // 1. 노드와 기존 부모의 관계를 분리한다.
+    Int nodeIndex = 0;
+    Node* nodeParent = node->parent;
+    while (nodeParent->childs[nodeIndex] != node)
+    {
+        nodeIndex++;
+    }
+    nodeParent->childs.erase(nodeParent->childs.begin() + nodeIndex);
+    nodeParent->length--;
+
+    // 2. 새 부모의 마지막 자식으로 삽입한다.
+    node->parent = parent;
+    parent->childs.push_back(node);
+    parent->length++;
 }
 
 template <typename T>
@@ -326,8 +359,8 @@ void ChildArrayForest<T>::MoveAsChild(Node* node, Node* parent, Int index){
 template <typename T>
 template <typename Key>
 typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Search(
-    Key key,
-    bool (*match)(const T& object, Key key)){
+    const Key& key,
+    bool (*match)(const T& object, const Key& key)){
     Node* result = 0;
     Int i = 0;
     while (i < this->length)
@@ -348,12 +381,19 @@ typename ChildArrayForest<T>::Node* ChildArrayForest<T>::Search(
 
 template <typename T>
 template <typename Processor>
-void ChildArrayForest<T>::ForEachPostOrder(Processor process){
-    Int i = 0;
-    while (i < this->length)
+void ChildArrayForest<T>::ForEachPostOrder(Node* node, Processor process){
+    if (node == 0)
     {
-        this->ForEachPostOrderSubTree(this->roots[i], process);
-        i++;
+        Int i = 0;
+        while (i < this->length)
+        {
+            this->ForEachPostOrderSubTree(this->roots[i], process);
+            i++;
+        }
+    }
+    else
+    {
+        this->ForEachPostOrderSubTree(node, process);
     }
 }
 
@@ -398,6 +438,17 @@ vector<typename ChildArrayForest<T>::OrderEntry> ChildArrayForest<T>::GetPostOrd
 }
 
 template <typename T>
+Int ChildArrayForest<T>::GetChildLength(Node* node) const{
+    Int childLength = this->length;
+    if (node != 0)
+    {
+        childLength = node->length;
+    }
+
+    return childLength;
+}
+
+template <typename T>
 Int ChildArrayForest<T>::GetLength() const{
     return this->length;
 }
@@ -427,7 +478,7 @@ template <typename Key>
 typename ChildArrayForest<T>::Node* ChildArrayForest<T>::SearchSubTree(
     Node* node,
     const Key& key,
-    bool (*match)(const T& object, Key key)){
+    bool (*match)(const T& object, const Key& key)){
     Node* result = 0;
     if (match(node->element, key))
     {

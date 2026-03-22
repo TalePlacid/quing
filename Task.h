@@ -19,26 +19,27 @@ enum Category : Int{
 class Task{
 public:
     Task();
-    Task(string uuid, string title, string detail, DateTime createdAt);
+    Task(const string& uuid, const string& title, const string& detail, const DateTime& createdAt);
     virtual ~Task();
     Task(const Task& source);
     Task& operator=(const Task& source);
 
-    void ModifyContents(string title, string detail);
-    void ScheduleFor(DateTime dueDate);
+    void Modify(const string& title, const string& detail);
+    void ScheduleFor(const DateTime& dueDate);
     void ClearDueDate();
     void ChangeCategory(Category category);
-    void RecordCompletionAt(DateTime completedAt);
+    void RecordCompletionAt(const DateTime& completedAt);
+    void ClearCompletionAt();
     void MarkUrgent(bool isUrgent);
 
     Task* Clone() const;
 
     bool EqualsByUUID(const Task& other) const;
-    bool IsEqual(const Task& other);
-    bool IsNotEqual(const Task& other);
+    bool IsEqual(const Task& other) const;
+    bool IsNotEqual(const Task& other) const;
 
-    bool operator==(const Task& other);
-    bool operator!=(const Task& other);
+    bool operator==(const Task& other) const;
+    bool operator!=(const Task& other) const;
 
     const string& GetUUID() const;
     const string& GetTitle() const;

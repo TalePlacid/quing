@@ -45,10 +45,10 @@ void Test_Task::Execute(){
     AssertReporter::Assert(task4 == task2,
                            Local8BitStringConverter::Convert("치환연산자 테스트 실패"));
 
-    task2.ModifyContents("수정된 제목", "수정된 세부 내용");
+    task2.Modify("수정된 제목", "수정된 세부 내용");
     AssertReporter::Assert(task2.GetTitle() == "수정된 제목"
                    && task2.GetDetail() == "수정된 세부 내용",
-                           Local8BitStringConverter::Convert("ModifyContents 테스트 실패"));
+                           Local8BitStringConverter::Convert("Modify 테스트 실패"));
 
     task2.ScheduleFor(DateTime(2026, 3, 17, 18, 45, 0));
     AssertReporter::Assert(task2.GetDueDate() == DateTime(2026, 3, 17, 18, 45, 0),

@@ -10,7 +10,7 @@ Task::Task()
     dueDate = DateTime();
 }
 
-Task::Task(string uuid, string title, string detail, DateTime createdAt)
+Task::Task(const string& uuid, const string& title, const string& detail, const DateTime& createdAt)
     :uuid(uuid), title(title), detail(detail), createdAt(createdAt){
     category = PENDING;
     isUrgent = false;
@@ -41,12 +41,12 @@ Task& Task::operator=(const Task& source){
     return *this;
 }
 
-void Task::ModifyContents(string title, string detail){
+void Task::Modify(const string& title, const string& detail){
     this->title = title;
     this->detail = detail;
 }
 
-void Task::ScheduleFor(DateTime dueDate){
+void Task::ScheduleFor(const DateTime& dueDate){
     this->dueDate = dueDate;
 }
 
@@ -58,8 +58,12 @@ void Task::ChangeCategory(Category category){
     this->category = category;
 }
 
-void Task::RecordCompletionAt(DateTime completedAt){
+void Task::RecordCompletionAt(const DateTime& completedAt){
     this->completedAt = completedAt;
+}
+
+void Task::ClearCompletionAt(){
+    this->completedAt = DateTime();
 }
 
 void Task::MarkUrgent(bool isUrgent){
@@ -74,7 +78,7 @@ bool Task::EqualsByUUID(const Task& other) const{
     return this->uuid == other.uuid;
 }
 
-bool Task::IsEqual(const Task& other){
+bool Task::IsEqual(const Task& other) const{
     return this->uuid == other.uuid
             && this->title == other.title
             && this->detail == other.detail
@@ -85,7 +89,7 @@ bool Task::IsEqual(const Task& other){
             && this->dueDate == other.dueDate;
 }
 
-bool Task::IsNotEqual(const Task& other){
+bool Task::IsNotEqual(const Task& other) const{
     return this->uuid != other.uuid
             || this->title != other.title
             || this->detail != other.detail
@@ -96,7 +100,7 @@ bool Task::IsNotEqual(const Task& other){
             || this->dueDate != other.dueDate;
 }
 
-bool Task::operator==(const Task& other){
+bool Task::operator==(const Task& other) const{
     return this->uuid == other.uuid
             && this->title == other.title
             && this->detail == other.detail
@@ -107,7 +111,7 @@ bool Task::operator==(const Task& other){
             && this->dueDate == other.dueDate;
 }
 
-bool Task::operator!=(const Task& other){
+bool Task::operator!=(const Task& other) const{
     return this->uuid != other.uuid
             || this->title != other.title
             || this->detail != other.detail

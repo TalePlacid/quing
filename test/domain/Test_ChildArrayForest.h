@@ -15,7 +15,7 @@ public:
     virtual void Execute();
     virtual string GetName();
 public:
-    static bool MatchInt(const Int& object, Int key);
+    static bool MatchInt(const Int& object, const Int& key);
     static void AddOne(Int& element);
 };
 
