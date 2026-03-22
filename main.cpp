@@ -1,8 +1,10 @@
 #include "test/Tester.h"
 #include "test/TestRegistrationHelper.h"
+#include "TaskBoardViewModel.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlEngine>
+#include <QQmlContext>
 
 int main(int argc, char *argv[])
 {
@@ -10,8 +12,11 @@ int main(int argc, char *argv[])
     TestRegistrationHelper::RegisterAll(tester);
     tester.Run();
 
+    TaskBoardViewModel taskBoardViewModel;
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
+
+    engine.rootContext()->setContextProperty("taskBoardViewModel", &taskBoardViewModel);
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,

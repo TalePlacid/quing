@@ -27,8 +27,7 @@ Window {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        headerTitle: "Task Board"
-        taskNavigatorLines: ["Current Position", "Current Child Position"]
+        taskNavigatorViewModel: taskBoardViewModel.taskNavigatorViewModel
     }
 
     Rectangle {

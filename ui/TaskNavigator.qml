@@ -4,11 +4,10 @@ import "task_navigator"
 Rectangle {
     id: root
 
-    required property string headerTitle
-    required property var taskNavigatorLines
+    required property var taskNavigatorViewModel
     property int taskNavigatorRowHeight: 40
 
-    readonly property int taskNavigatorHeight: (root.taskNavigatorLines.length + 1) * root.taskNavigatorRowHeight
+    readonly property int taskNavigatorHeight: (root.taskNavigatorViewModel.length + 1) * root.taskNavigatorRowHeight
 
     height: root.taskNavigatorHeight
     color: "#f7f7f8"
@@ -27,51 +26,46 @@ Rectangle {
     Column {
         anchors.fill: parent
 
-        Rectangle {
-            width: root.width
-            height: root.taskNavigatorRowHeight
-            color: "transparent"
-
-            Rectangle {
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: 1
-                color: "#d2d7de"
-            }
-
-            Text {
-                anchors.left: parent.left
-                anchors.leftMargin: 26
-                anchors.verticalCenter: parent.verticalCenter
-                text: root.headerTitle
-                font.pixelSize: 15
-                font.bold: true
-                color: "#5c6f90"
-            }
-        }
-
         RootTask {
-            visible: root.taskNavigatorLines.length > 0
             width: root.width
             height: root.taskNavigatorRowHeight
-            title: root.taskNavigatorLines.length > 0 ? root.taskNavigatorLines[0] : ""
         }
+
+        Repeater {
+            model: root.taskNavigatorViewModel.length
+
+            delegate: Loader {
+                property int pathIndex: index
+                property int pathIndentLevel: index + 1
+                property string pathTitle: root.taskNavigatorViewModel.titles[index]
+
+                width: root.width
+                height: root.taskNavigatorRowHeight
+
+                sourceComponent: pathIndex < root.taskNavigatorViewModel.length - 1 ? parentTaskComponent : currentTaskComponent
+            }
+        }
+    }
+
+    Component {
+        id: parentTaskComponent
 
         ParentTask {
-            visible: root.taskNavigatorLines.length > 1
             width: root.width
             height: root.taskNavigatorRowHeight
-            indentLevel: 1
-            title: root.taskNavigatorLines.length > 1 ? root.taskNavigatorLines[1] : ""
+            indentLevel: pathIndentLevel
+            title: pathTitle
         }
+    }
+
+    Component {
+        id: currentTaskComponent
 
         CurrentTask {
-            visible: root.taskNavigatorLines.length > 2
             width: root.width
             height: root.taskNavigatorRowHeight
-            indentLevel: 2
-            title: root.taskNavigatorLines.length > 2 ? root.taskNavigatorLines[2] : ""
+            indentLevel: pathIndentLevel
+            title: pathTitle
             showBottomLine: false
         }
     }
