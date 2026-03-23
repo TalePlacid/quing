@@ -1,19 +1,28 @@
-#include "TaskPathService.h"
-
 #include <vector>
 using namespace std;
+#include "TaskNavigationService.h"
 
-TaskPathService::TaskPathService(TaskController* taskController, NavigationState* navigationState)
+TaskNavigationService::TaskNavigationService(TaskController* taskController, NavigationState* navigationState)
 {
     this->taskController = taskController;
     this->navigationState = navigationState;
 }
 
-TaskPathService::~TaskPathService()
+TaskNavigationService::~TaskNavigationService()
 {
 }
 
-TaskPathTitleList TaskPathService::GetCurrentPathTitles() const
+void TaskNavigationService::MoveRoot()
+{
+    this->navigationState->MoveRoot();
+}
+
+void TaskNavigationService::MoveTo(const string& uuid)
+{
+    this->navigationState->MoveTo(uuid);
+}
+
+TaskPathTitleList TaskNavigationService::GetCurrentPathTitles() const
 {
     TaskPathTitleList pathTitles;
     const string& currentUUID = this->navigationState->GetCurrentUUID();
