@@ -4,18 +4,18 @@
 #include <QStringList>
 #include <QtTypes>
 
-#include "TaskPathService.h"
+#include "TaskNavigationService.h"
 
 class TaskNavigatorActionHandler
 {
 public:
-    explicit TaskNavigatorActionHandler(TaskPathService* taskPathService);
+    explicit TaskNavigatorActionHandler(TaskNavigationService* taskNavigationService);
     ~TaskNavigatorActionHandler();
 
     void GetCurrentPathTitles(QStringList& titles, qint64& length) const;
 
 private:
-    TaskPathService* taskPathService;
+    TaskNavigationService* taskNavigationService;
 };
 
 #endif // TASKNAVIGATORACTIONHANDLER_H

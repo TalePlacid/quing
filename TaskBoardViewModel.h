@@ -7,7 +7,7 @@
 #include "TaskController.h"
 #include "TaskNavigatorActionHandler.h"
 #include "TaskNavigatorViewModel.h"
-#include "TaskPathService.h"
+#include "TaskNavigationService.h"
 
 class TaskBoardViewModel : public QObject
 {
@@ -23,7 +23,7 @@ public:
 private:
     TaskController taskController;
     NavigationState navigationState;
-    TaskPathService taskPathService;
+    TaskNavigationService taskNavigationService;
     TaskNavigatorActionHandler taskNavigatorActionHandler;
     TaskNavigatorViewModel* taskNavigatorViewModel;
 };

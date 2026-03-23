@@ -1,5 +1,6 @@
 #include "TestRegistrationHelper.h"
 #include "Tester.h"
+#include "application/Test_TaskNavigationService.h"
 #include "domain/Test_Task.h"
 #include "domain/Test_ChildArrayForest.h"
 #include "domain/Test_TaskController.h"
@@ -18,4 +19,5 @@ void TestRegistrationHelper::RegisterAll(Tester& tester){
     tester.Register(new Test_Task());
     tester.Register(new Test_ChildArrayForest());
     tester.Register(new Test_TaskController());
+    tester.Register(new Test_TaskNavigationService());
 }

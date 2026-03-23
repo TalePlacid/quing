@@ -2,9 +2,9 @@
 
 #include <QString>
 
-TaskNavigatorActionHandler::TaskNavigatorActionHandler(TaskPathService* taskPathService)
+TaskNavigatorActionHandler::TaskNavigatorActionHandler(TaskNavigationService* taskNavigationService)
 {
-    this->taskPathService = taskPathService;
+    this->taskNavigationService = taskNavigationService;
 }
 
 TaskNavigatorActionHandler::~TaskNavigatorActionHandler()
@@ -13,7 +13,7 @@ TaskNavigatorActionHandler::~TaskNavigatorActionHandler()
 
 void TaskNavigatorActionHandler::GetCurrentPathTitles(QStringList& titles, qint64& length) const
 {
-    const TaskPathTitleList pathTitles = this->taskPathService->GetCurrentPathTitles();
+    const TaskPathTitleList pathTitles = this->taskNavigationService->GetCurrentPathTitles();
 
     titles.clear();
     Int i = 0;

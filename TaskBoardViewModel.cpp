@@ -2,8 +2,8 @@
 
 TaskBoardViewModel::TaskBoardViewModel(QObject* parent)
     : QObject(parent)
-    , taskPathService(&this->taskController, &this->navigationState)
-    , taskNavigatorActionHandler(&this->taskPathService)
+    , taskNavigationService(&this->taskController, &this->navigationState)
+    , taskNavigatorActionHandler(&this->taskNavigationService)
 {
     this->taskNavigatorViewModel = new TaskNavigatorViewModel(&this->taskNavigatorActionHandler, this);
 }

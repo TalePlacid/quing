@@ -1,5 +1,5 @@
-#include "test/Tester.h"
-#include "test/TestRegistrationHelper.h"
+#include "test/cpp/Tester.h"
+#include "test/cpp/TestRegistrationHelper.h"
 #include "TaskBoardViewModel.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>

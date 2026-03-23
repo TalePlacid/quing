@@ -1,7 +1,7 @@
 #ifndef TEST_TASKCONTROLLER_H
 #define TEST_TASKCONTROLLER_H
 #include "../Test.h"
-#include "../../TaskController.h"
+#include "../../../TaskController.h"
 
 class Test_TaskController : public Test{
 public:

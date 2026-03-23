@@ -1,5 +1,5 @@
 #include "Test_ChildArrayForest.h"
-#include "../../ChildArrayForest.h"
+#include "../../../ChildArrayForest.h"
 #include "../Local8BitStringConverter.h"
 #include "../AssertReporter.h"
 
