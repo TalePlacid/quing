@@ -21,19 +21,29 @@ Rectangle {
     Row {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: 24 + root.indentLevel * root.indentWidth
-        spacing: 14
+        anchors.leftMargin: 24 + (root.indentLevel - 1) * root.indentWidth
+        spacing: 10
 
         Item {
-            width: 12
+            width: 16
             height: parent.height
 
-            Rectangle {
-                width: 7
-                height: 7
-                radius: 3.5
+            Canvas {
+                width: 12
+                height: 8
                 anchors.centerIn: parent
-                color: "#b7bec8"
+                onPaint: {
+                    var context = getContext("2d")
+
+                    context.reset()
+                    context.beginPath()
+                    context.moveTo(1, 2)
+                    context.lineTo(width / 2, height - 1)
+                    context.lineTo(width - 1, 2)
+                    context.lineWidth = 1.5
+                    context.strokeStyle = "#7c8798"
+                    context.stroke()
+                }
             }
         }
 
@@ -44,7 +54,7 @@ Rectangle {
             font.bold: true
             color: "#5c6f90"
             elide: Text.ElideRight
-            width: root.width - (96 + root.indentLevel * root.indentWidth)
+            width: root.width - (96 + (root.indentLevel - 1) * root.indentWidth)
         }
     }
 }

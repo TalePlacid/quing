@@ -3,6 +3,7 @@
 !.gitignore
 !*.h
 !*.cpp
+!*.js
 !*.qml
 !devLog/*.md
 !devLog/**/*.md

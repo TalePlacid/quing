@@ -30,7 +30,7 @@ Rectangle {
     Row {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: 24 + root.indentLevel * root.indentWidth
+        anchors.leftMargin: 24 + (root.indentLevel - 1) * root.indentWidth
         spacing: 14
 
         Item {
@@ -53,7 +53,7 @@ Rectangle {
             font.bold: true
             color: "#5c6f90"
             elide: Text.ElideRight
-            width: root.width - (96 + root.indentLevel * root.indentWidth)
+            width: root.width - (96 + (root.indentLevel - 1) * root.indentWidth)
         }
     }
 }
